@@ -1,15 +1,67 @@
-<html>
+<!DOCTYPE html>
+<html lang="fr">
   <head>
     <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Évolution des températures</title>
+
+    <!-- Style CSS pour une meilleure présentation -->
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        background-color: #f4f4f9;
+        color: #333;
+        margin: 0;
+        padding: 0;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        height: 100vh;
+      }
+
+      h1 {
+        color: #4285f4;
+        text-align: center;
+        margin-top: 20px;
+      }
+
+      #chart_div {
+        width: 80%;
+        height: 500px;
+        margin: 20px auto;
+        border: 2px solid #ddd;
+        background-color: #fff;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        border-radius: 10px;
+        padding: 20px;
+      }
+
+      footer {
+        margin-top: 30px;
+        text-align: center;
+        font-size: 0.9em;
+        color: #888;
+      }
+    </style>
+
+    <!-- Chargement de Google Charts -->
     <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
   </head>
   <body>
-    <div id="chart_div" style="width: 100%; height: 500px;"></div>
+    <h1>Évolution des températures à Tawarano</h1>
+    <div id="chart_div"></div>
+
+    <footer>
+      © 2024 - Données fournies par le service météorologique de Tawarano
+    </footer>
+
     <script>
+      // Charger Google Charts
       google.charts.load('current', { packages: ['corechart'] });
       google.charts.setOnLoadCallback(drawBackgroundColor);
 
+      // Fonction pour dessiner le graphique
       function drawBackgroundColor() {
         function drawChart(data) {
           // Convertir les données récupérées en un tableau utilisable par Google Charts
@@ -25,30 +77,43 @@
 
           // Configurer les options du graphique en histogramme
           var options = {
-            title: 'Distribution des températures de la ville de Tawarano',
+            title: 'Distribution des températures à Tawarano',
             legend: { position: 'none' },
-            colors: ['#4285F4'],
-            chartArea: { width: '80%', height: '70%' }, // Ajuste l'aire du graphique
+            colors: ['#4285F4'], // Couleur plus douce pour l'histogramme
+            backgroundColor: '#f4f4f9', // Fond en harmonie avec la page
+            chartArea: { width: '85%', height: '70%' }, // Utilisation maximale de l'espace
             hAxis: {
               title: 'Températures (°C)',
-              gridlines: { count: 10 }
+              titleTextStyle: { color: '#333', bold: true, fontSize: 14 },
+              gridlines: { count: 10 },
+              textStyle: { fontSize: 12 }
             },
             vAxis: {
               title: 'Nombre de jours',
-              gridlines: { count: 10 }
+              titleTextStyle: { color: '#333', bold: true, fontSize: 14 },
+              gridlines: { count: 10 },
+              textStyle: { fontSize: 12 },
+              minValue: 0
             },
             histogram: {
               bucketSize: 1,  // Ajuste la taille des buckets pour une meilleure répartition
               minValue: Math.min(...data.results.map(e => e.temp)),
               maxValue: Math.max(...data.results.map(e => e.temp))
+            },
+            bar: { gap: 1 }, // Ajustement de l'espacement entre les barres
+            animation: {
+              startup: true,
+              duration: 1000,
+              easing: 'out'
             }
           };
 
+          // Dessiner l'histogramme
           var chart = new google.visualization.Histogram(document.getElementById('chart_div'));
           chart.draw(dataTable, options);
         }
 
-        // Récupération de données depuis notre API /tawarano/
+        // Récupérer les données depuis notre API /tawarano/
         fetch('/tawarano/')
           .then(response => response.json())
           .then(data => {
