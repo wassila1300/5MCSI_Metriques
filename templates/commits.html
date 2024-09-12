@@ -1,194 +1,249 @@
 <!DOCTYPE html>
 <html lang="fr">
-  <head>
+<head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Graphique des Commits</title>
-
-    <!-- Style CSS pour garder l'harmonie avec le reste du site -->
+    <title>Commits par Minute</title>
+    
+    <!-- Chart.js Library -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    
+    <!-- jQuery Library -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    
+    <!-- CSS Style for harmonizing the design -->
     <style>
-      * {
-        box-sizing: border-box;
-        margin: 0;
-        padding: 0;
-        font-family: 'Montserrat', sans-serif;
-      }
-
-      body {
-        background-color: #f0f0f0;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        height: 100vh;
-        padding: 20px;
-        overflow: hidden;
-        position: relative;
-      }
-
-      /* Fond animé avec des bulles */
-      .bubbles {
-        position: absolute;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        z-index: -1;
-        overflow: hidden;
-      }
-
-      .bubble {
-        position: absolute;
-        bottom: -100px;
-        background-color: rgba(91, 192, 222, 0.7);
-        border-radius: 50%;
-        animation: rise 15s infinite ease-in-out;
-      }
-
-      .bubble:nth-child(1) {
-        width: 50px;
-        height: 50px;
-        left: 25%;
-        animation-duration: 12s;
-      }
-
-      .bubble:nth-child(2) {
-        width: 80px;
-        height: 80px;
-        left: 50%;
-        animation-duration: 10s;
-      }
-
-      .bubble:nth-child(3) {
-        width: 40px;
-        height: 40px;
-        left: 75%;
-        animation-duration: 14s;
-      }
-
-      .bubble:nth-child(4) {
-        width: 60px;
-        height: 60px;
-        left: 35%;
-        animation-duration: 13s;
-      }
-
-      .bubble:nth-child(5) {
-        width: 90px;
-        height: 90px;
-        left: 60%;
-        animation-duration: 18s;
-      }
-
-      @keyframes rise {
-        0% {
-          transform: translateY(100vh);
-          opacity: 0;
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Montserrat', sans-serif;
         }
-        50% {
-          opacity: 0.6;
+
+        body {
+            background-color: #f0f0f0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            padding: 20px;
+            overflow: hidden;
+            position: relative;
         }
-        100% {
-          transform: translateY(-10vh);
-          opacity: 0;
+
+        /* Animated background bubbles */
+        .bubbles {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            overflow: hidden;
         }
-      }
 
-      .graph-container {
-        background-color: #ffffff;
-        padding: 40px;
-        border-radius: 12px;
-        box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
-        max-width: 900px;
-        width: 100%;
-        text-align: center;
-        z-index: 1;
-      }
+        .bubble {
+            position: absolute;
+            bottom: -100px;
+            background-color: rgba(91, 192, 222, 0.7);
+            border-radius: 50%;
+            animation: rise 15s infinite ease-in-out;
+        }
 
-      h1 {
-        font-size: 2em;
-        margin-bottom: 20px;
-        color: #333;
-      }
+        .bubble:nth-child(1) {
+            width: 50px;
+            height: 50px;
+            left: 25%;
+            animation-duration: 12s;
+        }
 
-      #commits_chart {
-        width: 100%;
-        height: 500px;
-      }
+        .bubble:nth-child(2) {
+            width: 80px;
+            height: 80px;
+            left: 50%;
+            animation-duration: 10s;
+        }
 
-      footer {
-        margin-top: 20px;
-        font-size: 0.85em;
-        color: #888;
-      }
+        .bubble:nth-child(3) {
+            width: 40px;
+            height: 40px;
+            left: 75%;
+            animation-duration: 14s;
+        }
 
-      footer a {
-        color: #5bc0de;
-        text-decoration: none;
-      }
+        .bubble:nth-child(4) {
+            width: 60px;
+            height: 60px;
+            left: 35%;
+            animation-duration: 13s;
+        }
 
-      footer a:hover {
-        text-decoration: underline;
-      }
+        .bubble:nth-child(5) {
+            width: 90px;
+            height: 90px;
+            left: 60%;
+            animation-duration: 18s;
+        }
+
+        @keyframes rise {
+            0% {
+                transform: translateY(100vh);
+                opacity: 0;
+            }
+            50% {
+                opacity: 0.6;
+            }
+            100% {
+                transform: translateY(-10vh);
+                opacity: 0;
+            }
+        }
+
+        .chart-container {
+            background-color: #ffffff;
+            padding: 40px;
+            border-radius: 12px;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+            max-width: 800px;
+            width: 100%;
+            text-align: center;
+            z-index: 1;
+        }
+
+        h1 {
+            font-size: 2em;
+            margin-bottom: 20px;
+            color: #333;
+        }
+
+        canvas {
+            border: 1px solid #ddd;
+            background-color: #fff;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        footer {
+            margin-top: 20px;
+            font-size: 0.85em;
+            color: #888;
+        }
+
+        footer a {
+            color: #5bc0de;
+            text-decoration: none;
+        }
+
+        footer a:hover {
+            text-decoration: underline;
+        }
     </style>
-
-    <!-- Google Charts -->
-    <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
-  </head>
-  <body>
-
-    <!-- Fond animé avec des bulles pour garder l'harmonie -->
+</head>
+<body>
+    <!-- Animated background with bubbles -->
     <div class="bubbles">
-      <div class="bubble"></div>
-      <div class="bubble"></div>
-      <div class="bubble"></div>
-      <div class="bubble"></div>
-      <div class="bubble"></div>
+        <div class="bubble"></div>
+        <div class="bubble"></div>
+        <div class="bubble"></div>
+        <div class="bubble"></div>
+        <div class="bubble"></div>
     </div>
 
-    <div class="graph-container">
-      <h1>Commits Minute par Minute</h1>
-      <div id="commits_chart"></div>
-      <footer>
-        Données extraites du repository GitHub - <a href="mailto:support@contact.com">Contactez-nous</a>
-      </footer>
+    <div class="chart-container">
+        <h1>Commits par Minute</h1>
+        <canvas id="commitsChart" width="500" height="250"></canvas>
+        <footer>
+            Données extraites du repository GitHub - <a href="mailto:support@contact.com">Contactez-nous</a>
+        </footer>
     </div>
 
     <script>
-      // Charger Google Charts
-      google.charts.load('current', { packages: ['corechart'] });
-      google.charts.setOnLoadCallback(drawChart);
+        $(document).ready(function() {
+            // Fetch commits data from GitHub API
+            $.getJSON('https://api.github.com/repos/OpenRSI/5MCSI_Metriques/commits', function(data) {
+                const commitsByMinute = {};
 
-      function drawChart() {
-        // Appel à l'API Flask pour récupérer les données des commits
-        fetch('/api/commits/')
-          .then(response => response.json())
-          .then(data => {
-            // Préparer les données pour Google Charts
-            var dataTable = new google.visualization.DataTable();
-            dataTable.addColumn('string', 'Minute');
-            dataTable.addColumn('number', 'Nombre de Commits');
+                // Process each commit
+                data.forEach(commit => {
+                    const date = new Date(commit.commit.author.date);
+                    const minute = date.getMinutes();
 
-            // Ajouter les données reçues à la table
-            for (var minute in data) {
-              dataTable.addRow([minute.toString(), data[minute]]);
-            }
+                    // Count commits per minute
+                    if (!commitsByMinute[minute]) {
+                        commitsByMinute[minute] = 0;
+                    }
+                    commitsByMinute[minute]++;
+                });
 
-            // Options du graphique
-            var options = {
-              title: 'Nombre de Commits par Minute',
-              hAxis: { title: 'Minute' },
-              vAxis: { title: 'Nombre de Commits' },
-              legend: 'none',
-              colors: ['#76A7FA'],
-              bar: { groupWidth: '75%' }
-            };
+                // Prepare data for the chart
+                const minutes = Object.keys(commitsByMinute).sort((a, b) => a - b);
+                const commitCounts = minutes.map(minute => commitsByMinute[minute] || 0);
 
-            // Créer le graphique dans la div
-            var chart = new google.visualization.ColumnChart(document.getElementById('commits_chart'));
-            chart.draw(dataTable, options);
-          })
-          .catch(error => console.error('Erreur lors de la récupération des données :', error));
-      }
+                // Create the chart
+                const ctx = document.getElementById('commitsChart').getContext('2d');
+                new Chart(ctx, {
+                    type: 'bar', // Bar chart
+                    data: {
+                        labels: minutes,
+                        datasets: [{
+                            label: 'Commits par Minute',
+                            data: commitCounts,
+                            backgroundColor: 'rgba(54, 162, 235, 0.2)',
+                            borderColor: 'rgba(54, 162, 235, 1)',
+                            borderWidth: 1,
+                            barPercentage: 0.6, // Adjusted bar width
+                            categoryPercentage: 0.8 // Adjusted spacing between bars
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        plugins: {
+                            legend: {
+                                display: true,
+                                position: 'top',
+                                labels: {
+                                    color: '#333'
+                                }
+                            },
+                            tooltip: {
+                                callbacks: {
+                                    label: function(tooltipItem) {
+                                        return `Minute ${tooltipItem.label}: ${tooltipItem.raw} commits`;
+                                    }
+                                }
+                            }
+                        },
+                        scales: {
+                            x: {
+                                beginAtZero: true,
+                                title: {
+                                    display: true,
+                                    text: 'Minute',
+                                    color: '#333'
+                                },
+                                ticks: {
+                                    color: '#333'
+                                }
+                            },
+                            y: {
+                                beginAtZero: true,
+                                title: {
+                                    display: true,
+                                    text: 'Nombre de Commits',
+                                    color: '#333'
+                                },
+                                suggestedMax: 10,
+                                ticks: {
+                                    color: '#333',
+                                    callback: function(value) {
+                                        return Number.isInteger(value) ? value : '';
+                                    }
+                                }
+                            }
+                        }
+                    }
+                });
+            });
+        });
     </script>
-  </body>
+</body>
 </html>
