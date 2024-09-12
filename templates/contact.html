@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Contactez-nous</title>
     
-    <!-- Style CSS pour un design original, épuré et élégant -->
+    <!-- Style CSS pour un design épuré et avec fond animé -->
     <style>
       * {
         box-sizing: border-box;
@@ -15,16 +15,27 @@
       }
 
       body {
-        background-color: #f0f0f0;
+        overflow: hidden;
         display: flex;
         justify-content: center;
         align-items: center;
         height: 100vh;
-        padding: 20px;
+        background-color: #f0f0f0;
+      }
+
+      /* Le conteneur des particules animées */
+      #particles-js {
+        position: absolute;
+        width: 100%;
+        height: 100%;
+        z-index: -1;
+        top: 0;
+        left: 0;
+        background-color: #f0f0f0;
       }
 
       .contact-container {
-        background-color: #ffffff;
+        background-color: rgba(255, 255, 255, 0.9);
         padding: 40px;
         border-radius: 12px;
         box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
@@ -32,27 +43,7 @@
         width: 100%;
         text-align: center;
         position: relative;
-        overflow: hidden;
-      }
-
-      .contact-container::before, .contact-container::after {
-        content: '';
-        position: absolute;
-        background-color: #5bc0de;
-        width: 500px;
-        height: 500px;
-        border-radius: 50%;
-        z-index: -1;
-      }
-
-      .contact-container::before {
-        top: -200px;
-        left: -200px;
-      }
-
-      .contact-container::after {
-        bottom: -250px;
-        right: -250px;
+        z-index: 1;
       }
 
       h1 {
@@ -126,9 +117,16 @@
         text-decoration: underline;
       }
     </style>
+
+    <!-- Chargement de Particles.js -->
+    <script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
   </head>
   <body>
 
+    <!-- Conteneur pour les particules -->
+    <div id="particles-js"></div>
+
+    <!-- Conteneur du formulaire de contact -->
     <div class="contact-container">
       <h1>Contactez-nous</h1>
       
@@ -155,6 +153,115 @@
         <p>Des questions ? <a href="mailto:support@contact.com">support@contact.com</a></p>
       </div>
     </div>
+
+    <!-- Configuration des particules -->
+    <script>
+      particlesJS("particles-js", {
+        "particles": {
+          "number": {
+            "value": 80,
+            "density": {
+              "enable": true,
+              "value_area": 800
+            }
+          },
+          "color": {
+            "value": "#5bc0de"
+          },
+          "shape": {
+            "type": "circle",
+            "stroke": {
+              "width": 0,
+              "color": "#000000"
+            },
+            "polygon": {
+              "nb_sides": 5
+            }
+          },
+          "opacity": {
+            "value": 0.5,
+            "random": false,
+            "anim": {
+              "enable": false,
+              "speed": 1,
+              "opacity_min": 0.1,
+              "sync": false
+            }
+          },
+          "size": {
+            "value": 4,
+            "random": true,
+            "anim": {
+              "enable": false,
+              "speed": 40,
+              "size_min": 0.1,
+              "sync": false
+            }
+          },
+          "line_linked": {
+            "enable": true,
+            "distance": 150,
+            "color": "#5bc0de",
+            "opacity": 0.4,
+            "width": 1
+          },
+          "move": {
+            "enable": true,
+            "speed": 3,
+            "direction": "none",
+            "random": false,
+            "straight": false,
+            "out_mode": "out",
+            "bounce": false,
+            "attract": {
+              "enable": false,
+              "rotateX": 600,
+              "rotateY": 1200
+            }
+          }
+        },
+        "interactivity": {
+          "detect_on": "canvas",
+          "events": {
+            "onhover": {
+              "enable": true,
+              "mode": "repulse"
+            },
+            "onclick": {
+              "enable": true,
+              "mode": "push"
+            },
+            "resize": true
+          },
+          "modes": {
+            "grab": {
+              "distance": 400,
+              "line_linked": {
+                "opacity": 1
+              }
+            },
+            "bubble": {
+              "distance": 400,
+              "size": 40,
+              "duration": 2,
+              "opacity": 8,
+              "speed": 3
+            },
+            "repulse": {
+              "distance": 200,
+              "duration": 0.4
+            },
+            "push": {
+              "particles_nb": 4
+            },
+            "remove": {
+              "particles_nb": 2
+            }
+          }
+        },
+        "retina_detect": true
+      });
+    </script>
 
   </body>
 </html>
