@@ -1,57 +1,133 @@
 <!DOCTYPE html>
 <html lang="fr">
   <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Évolution des températures</title>
 
-    <!-- Style CSS pour une meilleure présentation et un design plus marqué -->
+    <!-- Style CSS pour harmoniser le design avec le reste du site -->
     <style>
-      body {
-        font-family: 'Roboto', sans-serif;
-        background-color: #e0f7fa;
-        color: #333;
+      * {
+        box-sizing: border-box;
         margin: 0;
         padding: 0;
+        font-family: 'Montserrat', sans-serif;
+      }
+
+      body {
+        background-color: #f0f0f0;
         display: flex;
-        flex-direction: column;
-        align-items: center;
         justify-content: center;
+        align-items: center;
         height: 100vh;
+        padding: 20px;
+        overflow: hidden;
+        position: relative;
+      }
+
+      /* Fond animé avec des bulles, réutilisé pour garder l'harmonie */
+      .bubbles {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        z-index: -1;
+        overflow: hidden;
+      }
+
+      .bubble {
+        position: absolute;
+        bottom: -100px;
+        background-color: rgba(91, 192, 222, 0.7);
+        border-radius: 50%;
+        animation: rise 15s infinite ease-in-out;
+      }
+
+      .bubble:nth-child(1) {
+        width: 50px;
+        height: 50px;
+        left: 25%;
+        animation-duration: 12s;
+      }
+
+      .bubble:nth-child(2) {
+        width: 80px;
+        height: 80px;
+        left: 50%;
+        animation-duration: 10s;
+      }
+
+      .bubble:nth-child(3) {
+        width: 40px;
+        height: 40px;
+        left: 75%;
+        animation-duration: 14s;
+      }
+
+      .bubble:nth-child(4) {
+        width: 60px;
+        height: 60px;
+        left: 35%;
+        animation-duration: 13s;
+      }
+
+      .bubble:nth-child(5) {
+        width: 90px;
+        height: 90px;
+        left: 60%;
+        animation-duration: 18s;
+      }
+
+      @keyframes rise {
+        0% {
+          transform: translateY(100vh);
+          opacity: 0;
+        }
+        50% {
+          opacity: 0.6;
+        }
+        100% {
+          transform: translateY(-10vh);
+          opacity: 0;
+        }
+      }
+
+      .graph-container {
+        background-color: #ffffff;
+        padding: 40px;
+        border-radius: 12px;
+        box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+        max-width: 800px;
+        width: 100%;
+        text-align: center;
+        z-index: 1;
       }
 
       h1 {
-        color: #006064;
-        text-align: center;
-        margin-top: 20px;
-        font-size: 2.5em;
-        font-weight: bold;
-        text-shadow: 1px 1px 2px rgba(0,0,0,0.1);
+        font-size: 2em;
+        margin-bottom: 20px;
+        color: #333;
       }
 
       #chart_div {
-        width: 85%;
+        width: 100%;
         height: 500px;
-        margin: 20px auto;
-        background-color: #ffffff;
-        border-radius: 12px;
-        padding: 20px;
-        box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
       }
 
       footer {
         margin-top: 20px;
-        text-align: center;
-        font-size: 0.9em;
+        font-size: 0.85em;
         color: #888;
       }
 
-      /* Animation des barres de l'histogramme */
-      #chart_div rect {
-        transition: fill 0.3s ease;
+      footer a {
+        color: #5bc0de;
+        text-decoration: none;
       }
-      #chart_div rect:hover {
-        fill: #ff7043 !important;
+
+      footer a:hover {
+        text-decoration: underline;
       }
     </style>
 
@@ -59,12 +135,23 @@
     <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
   </head>
   <body>
-    <h1>Évolution des températures à Tawarano</h1>
-    <div id="chart_div"></div>
 
-    <footer>
-      © 2024 - Données fournies par le service météorologique de Tawarano
-    </footer>
+    <!-- Fond animé avec des bulles, réutilisé pour créer une continuité visuelle -->
+    <div class="bubbles">
+      <div class="bubble"></div>
+      <div class="bubble"></div>
+      <div class="bubble"></div>
+      <div class="bubble"></div>
+      <div class="bubble"></div>
+    </div>
+
+    <div class="graph-container">
+      <h1>Évolution des températures à Tawarano</h1>
+      <div id="chart_div"></div>
+      <footer>
+        Données fournies par le service météorologique de Tawarano - <a href="mailto:support@contact.com">Contactez-nous</a>
+      </footer>
+    </div>
 
     <script>
       google.charts.load('current', { packages: ['corechart'] });
@@ -76,36 +163,33 @@
           dataTable.addColumn('string', 'Date');
           dataTable.addColumn('number', 'Température (°C)');
           
+          // Ajouter les données dans le DataTable
           data.results.forEach(entry => {
             var date = new Date(entry.Jour * 1000);
             dataTable.addRow([date.toLocaleDateString(), entry.temp]);
           });
 
+          // Configurer les options du graphique
           var options = {
             title: 'Distribution des températures à Tawarano',
             legend: { position: 'none' },
-            colors: ['#29b6f6'],
-            backgroundColor: '#e0f7fa',
+            colors: ['#5bc0de'],
+            backgroundColor: '#f0f0f0',
             chartArea: { width: '85%', height: '70%' },
             hAxis: {
               title: 'Températures (°C)',
-              titleTextStyle: { color: '#333', bold: true, fontSize: 16 },
+              titleTextStyle: { color: '#333', bold: true, fontSize: 14 },
               gridlines: { count: 10 },
               textStyle: { fontSize: 12 }
             },
             vAxis: {
               title: 'Nombre de jours',
-              titleTextStyle: { color: '#333', bold: true, fontSize: 16 },
+              titleTextStyle: { color: '#333', bold: true, fontSize: 14 },
               gridlines: { count: 10 },
               textStyle: { fontSize: 12 },
               minValue: 0
             },
-            histogram: {
-              bucketSize: 0.5,  // Buckets plus petits pour des barres plus fines
-              minValue: Math.min(...data.results.map(e => e.temp)),
-              maxValue: Math.max(...data.results.map(e => e.temp))
-            },
-            bar: { gap: 0.2 },  // Espacement plus important entre les barres
+            bar: { gap: 0.2 },
             animation: {
               startup: true,
               duration: 1200,
