@@ -5,11 +5,11 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Évolution des températures</title>
 
-    <!-- Style CSS pour une meilleure présentation -->
+    <!-- Style CSS pour une meilleure présentation et un design plus marqué -->
     <style>
       body {
-        font-family: Arial, sans-serif;
-        background-color: #f4f4f9;
+        font-family: 'Roboto', sans-serif;
+        background-color: #e0f7fa;
         color: #333;
         margin: 0;
         padding: 0;
@@ -21,31 +21,41 @@
       }
 
       h1 {
-        color: #4285f4;
+        color: #006064;
         text-align: center;
         margin-top: 20px;
+        font-size: 2.5em;
+        font-weight: bold;
+        text-shadow: 1px 1px 2px rgba(0,0,0,0.1);
       }
 
       #chart_div {
-        width: 80%;
+        width: 85%;
         height: 500px;
         margin: 20px auto;
-        border: 2px solid #ddd;
-        background-color: #fff;
-        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-        border-radius: 10px;
+        background-color: #ffffff;
+        border-radius: 12px;
         padding: 20px;
+        box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
       }
 
       footer {
-        margin-top: 30px;
+        margin-top: 20px;
         text-align: center;
         font-size: 0.9em;
         color: #888;
       }
+
+      /* Animation des barres de l'histogramme */
+      #chart_div rect {
+        transition: fill 0.3s ease;
+      }
+      #chart_div rect:hover {
+        fill: #ff7043 !important;
+      }
     </style>
 
-    <!-- Chargement de Google Charts -->
+    <!-- Google Charts -->
     <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
   </head>
   <body>
@@ -57,63 +67,56 @@
     </footer>
 
     <script>
-      // Charger Google Charts
       google.charts.load('current', { packages: ['corechart'] });
       google.charts.setOnLoadCallback(drawBackgroundColor);
 
-      // Fonction pour dessiner le graphique
       function drawBackgroundColor() {
         function drawChart(data) {
-          // Convertir les données récupérées en un tableau utilisable par Google Charts
           var dataTable = new google.visualization.DataTable();
           dataTable.addColumn('string', 'Date');
           dataTable.addColumn('number', 'Température (°C)');
           
-          // Ajouter les données dans le DataTable
           data.results.forEach(entry => {
             var date = new Date(entry.Jour * 1000);
             dataTable.addRow([date.toLocaleDateString(), entry.temp]);
           });
 
-          // Configurer les options du graphique en histogramme
           var options = {
             title: 'Distribution des températures à Tawarano',
             legend: { position: 'none' },
-            colors: ['#4285F4'], // Couleur plus douce pour l'histogramme
-            backgroundColor: '#f4f4f9', // Fond en harmonie avec la page
-            chartArea: { width: '85%', height: '70%' }, // Utilisation maximale de l'espace
+            colors: ['#29b6f6'],
+            backgroundColor: '#e0f7fa',
+            chartArea: { width: '85%', height: '70%' },
             hAxis: {
               title: 'Températures (°C)',
-              titleTextStyle: { color: '#333', bold: true, fontSize: 14 },
+              titleTextStyle: { color: '#333', bold: true, fontSize: 16 },
               gridlines: { count: 10 },
               textStyle: { fontSize: 12 }
             },
             vAxis: {
               title: 'Nombre de jours',
-              titleTextStyle: { color: '#333', bold: true, fontSize: 14 },
+              titleTextStyle: { color: '#333', bold: true, fontSize: 16 },
               gridlines: { count: 10 },
               textStyle: { fontSize: 12 },
               minValue: 0
             },
             histogram: {
-              bucketSize: 1,  // Ajuste la taille des buckets pour une meilleure répartition
+              bucketSize: 0.5,  // Buckets plus petits pour des barres plus fines
               minValue: Math.min(...data.results.map(e => e.temp)),
               maxValue: Math.max(...data.results.map(e => e.temp))
             },
-            bar: { gap: 1 }, // Ajustement de l'espacement entre les barres
+            bar: { gap: 0.2 },  // Espacement plus important entre les barres
             animation: {
               startup: true,
-              duration: 1000,
+              duration: 1200,
               easing: 'out'
             }
           };
 
-          // Dessiner l'histogramme
           var chart = new google.visualization.Histogram(document.getElementById('chart_div'));
           chart.draw(dataTable, options);
         }
 
-        // Récupérer les données depuis notre API /tawarano/
         fetch('/tawarano/')
           .then(response => response.json())
           .then(data => {
