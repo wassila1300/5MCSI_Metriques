@@ -1,7 +1,7 @@
 <html>
   <head>
     <meta charset="UTF-8" />
-    <title>Metrique</title>
+    <title>Évolution des températures</title>
     <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
   </head>
   <body>
@@ -15,31 +15,30 @@
           // Convertir les données récupérées en un tableau utilisable par Google Charts
           var dataTable = new google.visualization.DataTable();
           dataTable.addColumn('string', 'Date');
-          dataTable.addColumn('number', 'Valeur');
+          dataTable.addColumn('number', 'Température (°C)');
+          
+          // Ajouter les données dans le DataTable
           data.results.forEach(entry => {
             var date = new Date(entry.Jour * 1000);
             dataTable.addRow([date.toLocaleDateString(), entry.temp]);
           });
 
-          // Configurer les options du graphique en ligne
+          // Configurer les options du graphique en histogramme
           var options = {
-            title: 'Évolution des températures de la ville de Tawarano',
+            title: 'Distribution des températures de la ville de Tawarano',
             legend: { position: 'none' },
             colors: ['#4285F4'],
             chartArea: { width: '80%', height: '70%' }, // Ajuste l'aire du graphique
             hAxis: {
-              title: 'Températures',
-              gridlines: { count: 10 },
-              minValue: Math.min(...data.results.map(e => e.temp)),
-              maxValue: Math.max(...data.results.map(e => e.temp))
+              title: 'Températures (°C)',
+              gridlines: { count: 10 }
             },
             vAxis: {
-              title: 'Fréquence'
+              title: 'Nombre de jours',
+              gridlines: { count: 10 }
             },
-            bar: { gap: 0 },
             histogram: {
-              bucketSize: 0.5,  // Ajuste la taille des buckets
-              maxNumBuckets: 50, // Limite le nombre de buckets
+              bucketSize: 1,  // Ajuste la taille des buckets pour une meilleure répartition
               minValue: Math.min(...data.results.map(e => e.temp)),
               maxValue: Math.max(...data.results.map(e => e.temp))
             }
