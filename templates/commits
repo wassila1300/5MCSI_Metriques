@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="fr">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Commits Minute par Minute</title>
+
+    <!-- Style CSS pour garder l'harmonie avec le reste du site -->
+    <style>
+      * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+        font-family: 'Montserrat', sans-serif;
+      }
+
+      body {
+        background-color: #f0f0f0;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
+        padding: 20px;
+        overflow: hidden;
+        position: relative;
+      }
+
+      /* Fond animé avec des bulles */
+      .bubbles {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        z-index: -1;
+        overflow: hidden;
+      }
+
+      .bubble {
+        position: absolute;
+        bottom: -100px;
+        background-color: rgba(91, 192, 222, 0.7);
+        border-radius: 50%;
+        animation: rise 15s infinite ease-in-out;
+      }
+
+      .bubble:nth-child(1) {
+        width: 50px;
+        height: 50px;
+        left: 25%;
+        animation-duration: 12s;
+      }
+
+      .bubble:nth-child(2) {
+        width: 80px;
+        height: 80px;
+        left: 50%;
+        animation-duration: 10s;
+      }
+
+      .bubble:nth-child(3) {
+        width: 40px;
+        height: 40px;
+        left: 75%;
+        animation-duration: 14s;
+      }
+
+      .bubble:nth-child(4) {
+        width: 60px;
+        height: 60px;
+        left: 35%;
+        animation-duration: 13s;
+      }
+
+      .bubble:nth-child(5) {
+        width: 90px;
+        height: 90px;
+        left: 60%;
+        animation-duration: 18s;
+      }
+
+      @keyframes rise {
+        0% {
+          transform: translateY(100vh);
+          opacity: 0;
+        }
+        50% {
+          opacity: 0.6;
+        }
+        100% {
+          transform: translateY(-10vh);
+          opacity: 0;
+        }
+      }
+
+      .graph-container {
+        background-color: #ffffff;
+        padding: 40px;
+        border-radius: 12px;
+        box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+        max-width: 800px;
+        width: 100%;
+        text-align: center;
+        z-index: 1;
+      }
+
+      h1 {
+        font-size: 2em;
+        margin-bottom: 20px;
+        color: #333;
+      }
+
+      #chart_div {
+        width: 100%;
+        height: 500px;
+      }
+
+      footer {
+        margin-top: 20px;
+        font-size: 0.85em;
+        color: #888;
+      }
+
+      footer a {
+        color: #5bc0de;
+        text-decoration: none;
+      }
+
+      footer a:hover {
+        text-decoration: underline;
+      }
+    </style>
+
+    <!-- Google Charts -->
+    <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+  </head>
+  <body>
+
+    <!-- Fond animé avec des bulles, réutilisé pour créer une continuité visuelle -->
+    <div class="bubbles">
+      <div class="bubble"></div>
+      <div class="bubble"></div>
+      <div class="bubble"></div>
+      <div class="bubble"></div>
+      <div class="bubble"></div>
+    </div>
+
+    <div class="graph-container">
+      <h1>Commits minute par minute</h1>
+      <div id="chart_div"></div>
+      <footer>
+        Données extraites du repository GitHub - <a href="mailto:support@contact.com">Contactez-nous</a>
+      </footer>
+    </div>
+
+    <script>
+      google.charts.load('current', { packages: ['corechart'] });
+      google.charts.setOnLoadCallback(drawCommitsChart);
+
+      async function fetchCommitData() {
+        // Appel à l'API GitHub pour obtenir les données de commits
+        const response = await fetch('https://api.github.com/repos/OpenRSI/5MCSI_Metriques/commits');
+        const commits = await response.json();
+
+        // Extraction des minutes de chaque commit
+        let commitMinutes = {};
+        commits.forEach(commit => {
+          const date = commit.commit.author.date;
+          const minute = new Date(date).getMinutes();  // Extraction des minutes
+          commitMinutes[minute] = (commitMinutes[minute] || 0) + 1;
+        });
+
+        return commitMinutes;
+      }
+
+      async function drawCommitsChart() {
+        const commitMinutes = await fetchCommitData();
+
+        // Préparation des données pour Google Charts
+        const dataTable = new google.visualization.DataTable();
+        dataTable.addColumn('number', 'Minute');
+        dataTable.addColumn('number', 'Nombre de Commits');
+
+        // Insérer les données minute par minute
+        for (let minute in commitMinutes) {
+          dataTable.addRow([parseInt(minute), commitMinutes[minute]]);
+        }
+
+        // Options du graphique
+        const options = {
+          title: 'Commits minute par minute',
+          legend: { position: 'none' },
+          colors: ['#5bc0de'],
+          backgroundColor: '#f0f0f0',
+          chartArea: { width: '85%', height: '70%' },
+          hAxis: {
+            title: 'Minutes',
+            gridlines: { count: 10 }
+          },
+          vAxis: {
+            title: 'Nombre de commits',
+            minValue: 0
+          },
+          bar: { gap: 0.2 },
+          animation: {
+            startup: true,
+            duration: 1000,
+            easing: 'out'
+          }
+        };
+
+        const chart = new google.visualization.ColumnChart(document.getElementById('chart_div'));
+        chart.draw(dataTable, options);
+      }
+    </script>
+  </body>
+</html>
