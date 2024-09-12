@@ -5,48 +5,57 @@
     <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
   </head>
   <body>
-    <div id="chart_div"></div>
+    <div id="chart_div" style="width: 100%; height: 500px;"></div>
     <script>
       google.charts.load('current', { packages: ['corechart'] });
       google.charts.setOnLoadCallback(drawBackgroundColor);
-     function drawBackgroundColor() {
-    function drawChart(data) {
-    // Convertir les données récupérées en un tableau utilisable par Google Charts
-    var dataTable = new google.visualization.DataTable();
-    dataTable.addColumn('string', 'Date');
-    dataTable.addColumn('number', 'Valeur');
-    data.results.forEach(entry => {
-      var date = new Date(entry.Jour * 1000);
-      dataTable.addRow([date.toLocaleDateString(), entry.temp]);
-    });
-    // Configurer les options du graphique en ligne
-    var options = {
-      title: 'Évolution des températures de la ville de Tawarano',
-      legend: { position: 'none' },
-      colors: ['#4285F4'],
 
-      chartArea: { width: 405 },
-      hAxis: {
-        ticks: [-1, -0.75, -0.5, -0.25, 0, 0.25, 0.5, 0.75, 1]
-      },
-      bar: { gap: 0 },
+      function drawBackgroundColor() {
+        function drawChart(data) {
+          // Convertir les données récupérées en un tableau utilisable par Google Charts
+          var dataTable = new google.visualization.DataTable();
+          dataTable.addColumn('string', 'Date');
+          dataTable.addColumn('number', 'Valeur');
+          data.results.forEach(entry => {
+            var date = new Date(entry.Jour * 1000);
+            dataTable.addRow([date.toLocaleDateString(), entry.temp]);
+          });
 
-      histogram: {
-        bucketSize: 0.01,
-        maxNumBuckets: 400,
-        minValue: -1,
-        maxValue: 1 }
-    };
-    var chart = new google.visualization.Histogram(document.getElementById('chart_div'));
-    chart.draw(dataTable, options);
-  }
-  // Récupération de données depuis notre API /tawarano/
-  fetch('/tawarano/')
-    .then(response => response.json())
-    .then(data => {
-      drawChart(data);
-    })
-}
+          // Configurer les options du graphique en ligne
+          var options = {
+            title: 'Évolution des températures de la ville de Tawarano',
+            legend: { position: 'none' },
+            colors: ['#4285F4'],
+            chartArea: { width: '80%', height: '70%' }, // Ajuste l'aire du graphique
+            hAxis: {
+              title: 'Températures',
+              gridlines: { count: 10 },
+              minValue: Math.min(...data.results.map(e => e.temp)),
+              maxValue: Math.max(...data.results.map(e => e.temp))
+            },
+            vAxis: {
+              title: 'Fréquence'
+            },
+            bar: { gap: 0 },
+            histogram: {
+              bucketSize: 0.5,  // Ajuste la taille des buckets
+              maxNumBuckets: 50, // Limite le nombre de buckets
+              minValue: Math.min(...data.results.map(e => e.temp)),
+              maxValue: Math.max(...data.results.map(e => e.temp))
+            }
+          };
+
+          var chart = new google.visualization.Histogram(document.getElementById('chart_div'));
+          chart.draw(dataTable, options);
+        }
+
+        // Récupération de données depuis notre API /tawarano/
+        fetch('/tawarano/')
+          .then(response => response.json())
+          .then(data => {
+            drawChart(data);
+          });
+      }
     </script>
   </body>
 </html>
