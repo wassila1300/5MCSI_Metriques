@@ -4,11 +4,154 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Graphique des Commits</title>
+
+    <!-- Style CSS pour garder l'harmonie avec le reste du site -->
+    <style>
+      * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+        font-family: 'Montserrat', sans-serif;
+      }
+
+      body {
+        background-color: #f0f0f0;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
+        padding: 20px;
+        overflow: hidden;
+        position: relative;
+      }
+
+      /* Fond animé avec des bulles */
+      .bubbles {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        z-index: -1;
+        overflow: hidden;
+      }
+
+      .bubble {
+        position: absolute;
+        bottom: -100px;
+        background-color: rgba(91, 192, 222, 0.7);
+        border-radius: 50%;
+        animation: rise 15s infinite ease-in-out;
+      }
+
+      .bubble:nth-child(1) {
+        width: 50px;
+        height: 50px;
+        left: 25%;
+        animation-duration: 12s;
+      }
+
+      .bubble:nth-child(2) {
+        width: 80px;
+        height: 80px;
+        left: 50%;
+        animation-duration: 10s;
+      }
+
+      .bubble:nth-child(3) {
+        width: 40px;
+        height: 40px;
+        left: 75%;
+        animation-duration: 14s;
+      }
+
+      .bubble:nth-child(4) {
+        width: 60px;
+        height: 60px;
+        left: 35%;
+        animation-duration: 13s;
+      }
+
+      .bubble:nth-child(5) {
+        width: 90px;
+        height: 90px;
+        left: 60%;
+        animation-duration: 18s;
+      }
+
+      @keyframes rise {
+        0% {
+          transform: translateY(100vh);
+          opacity: 0;
+        }
+        50% {
+          opacity: 0.6;
+        }
+        100% {
+          transform: translateY(-10vh);
+          opacity: 0;
+        }
+      }
+
+      .graph-container {
+        background-color: #ffffff;
+        padding: 40px;
+        border-radius: 12px;
+        box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+        max-width: 900px;
+        width: 100%;
+        text-align: center;
+        z-index: 1;
+      }
+
+      h1 {
+        font-size: 2em;
+        margin-bottom: 20px;
+        color: #333;
+      }
+
+      #commits_chart {
+        width: 100%;
+        height: 500px;
+      }
+
+      footer {
+        margin-top: 20px;
+        font-size: 0.85em;
+        color: #888;
+      }
+
+      footer a {
+        color: #5bc0de;
+        text-decoration: none;
+      }
+
+      footer a:hover {
+        text-decoration: underline;
+      }
+    </style>
+
+    <!-- Google Charts -->
     <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
   </head>
   <body>
-    <h1>Commits Minute par Minute</h1>
-    <div id="commits_chart" style="width: 900px; height: 500px;"></div>
+
+    <!-- Fond animé avec des bulles pour garder l'harmonie -->
+    <div class="bubbles">
+      <div class="bubble"></div>
+      <div class="bubble"></div>
+      <div class="bubble"></div>
+      <div class="bubble"></div>
+      <div class="bubble"></div>
+    </div>
+
+    <div class="graph-container">
+      <h1>Commits Minute par Minute</h1>
+      <div id="commits_chart"></div>
+      <footer>
+        Données extraites du repository GitHub - <a href="mailto:support@contact.com">Contactez-nous</a>
+      </footer>
+    </div>
 
     <script>
       // Charger Google Charts
